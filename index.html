@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Buy & Sell</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+margin:0;
+font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+background:#f4f5f7;
+color:#17191c;
+}
+
+.app{
+max-width:480px;
+margin:auto;
+min-height:100vh;
+background:#fff;
+padding-bottom:80px;
+}
+
+header{
+padding:18px;
+background:white;
+position:sticky;
+top:0;
+z-index:10;
+border-bottom:1px solid #eee;
+}
+
+.logo{
+font-size:25px;
+font-weight:800;
+}
+
+.subtitle{
+font-size:13px;
+color:#777;
+margin-top:3px;
+}
+
+.search{
+margin-top:15px;
+background:#f1f2f4;
+border-radius:14px;
+padding:13px;
+color:#777;
+}
+
+.section{
+padding:18px 18px 10px;
+font-size:19px;
+font-weight:750;
+}
+
+.city{
+margin:0 18px;
+padding:13px;
+border:1px solid #ddd;
+border-radius:13px;
+display:flex;
+justify-content:space-between;
+}
+
+.categories{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:9px;
+padding:10px 18px;
+}
+
+.category{
+background:#f5f6f7;
+border-radius:15px;
+padding:12px 3px;
+text-align:center;
+font-size:12px;
+}
+
+.category-icon{
+font-size:25px;
+margin-bottom:5px;
+}
+
+.products{
+padding:10px 18px;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:12px;
+}
+
+.empty{
+margin:10px 18px;
+padding:35px 20px;
+text-align:center;
+background:#f6f7f8;
+border-radius:18px;
+color:#777;
+}
+
+.card{
+border:1px solid #e8e8e8;
+border-radius:16px;
+overflow:hidden;
+background:white;
+}
+
+.card-photo{
+height:150px;
+background:#eef0f2;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:42px;
+}
+
+.card-info{
+padding:10px;
+}
+
+.card-title{
+font-weight:650;
+}
+
+.card-price{
+font-size:17px;
+font-weight:800;
+margin-top:6px;
+}
+
+.card-city{
+font-size:12px;
+color:#888;
+margin-top:4px;
+}
+
+.page{
+display:none;
+}
+
+.page.active{
+display:block;
+}
+
+.form{
+padding:18px;
+}
+
+input,textarea,select{
+width:100%;
+padding:14px;
+border:1px solid #ddd;
+border-radius:12px;
+font-size:15px;
+margin-bottom:12px;
+font-family:inherit;
+}
+
+textarea{
+min-height:120px;
+resize:none;
+}
+
+button{
+font-family:inherit;
+cursor:pointer;
+}
+
+.main-button{
+width:100%;
+border:0;
+background:#1684ff;
+color:white;
+padding:15px;
+border-radius:13px;
+font-size:16px;
+font-weight:700;
+}
+
+.secondary{
+width:100%;
+border:0;
+background:#eef0f3;
+padding:14px;
+border-radius:13px;
+font-weight:600;
+margin-top:10px;
+}
+
+nav{
+position:fixed;
+bottom:0;
+left:50%;
+transform:translateX(-50%);
+width:min(480px,100%);
+background:white;
+border-top:1px solid #ddd;
+display:flex;
+justify-content:space-around;
+padding:8px 3px 10px;
+z-index:20;
+}
+
+nav button{
+background:none;
+border:0;
+color:#777;
+font-size:11px;
+}
+
+nav button span{
+display:block;
+font-size:21px;
+margin-bottom:2px;
+}
+
+nav button.active{
+color:#1684ff;
+}
+
+.back{
+border:0;
+background:none;
+font-size:16px;
+padding:0 0 15px;
+}
+
+.photo-box{
+border:2px dashed #ddd;
+border-radius:15px;
+padding:25px;
+text-align:center;
+margin-bottom:15px;
+}
+
+.profile{
+padding:20px;
+}
+
+.profile-item{
+padding:16px 0;
+border-bottom:1px solid #eee;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+<div class="logo">🛒 Buy & Sell</div>
+<div class="subtitle">Покупай. Продавай. Общайся.</div>
+
+<div class="search" onclick="openSearch()">
+🔎 Поиск товаров и услуг
+</div>
+</header>
+
+
+<!-- ГЛАВНАЯ -->
+
+<div id="home" class="page active">
+
+<div class="section">📍 Ваш город</div>
+
+<div class="city" onclick="chooseCity()">
+<span id="cityText">Выберите город</span>
+<span>›</span>
+</div>
+
+
+<div class="section">Категории</div>
+
+<div class="categories">
+
+<div class="category" onclick="category('Телефоны')">
+<div class="category-icon">📱</div>
+Телефоны
+</div>
+
+<div class="category" onclick="category('Авто')">
+<div class="category-icon">🚗</div>
+Авто
+</div>
+
+<div class="category" onclick="category('Электроника')">
+<div class="category-icon">💻</div>
+Электроника
+</div>
+
+<div class="category" onclick="category('Одежда')">
+<div class="category-icon">👕</div>
+Одежда
+</div>
+
+<div class="category" onclick="category('Недвижимость')">
+<div class="category-icon">🏠</div>
+Недвижимость
+</div>
+
+<div class="category" onclick="category('Услуги')">
+<div class="category-icon">🛠️</div>
+Услуги
+</div>
+
+<div class="category" onclick="category('Животные')">
+<div class="category-icon">🐕</div>
+Животные
+</div>
+
+<div class="category" onclick="category('Другое')">
+<div class="category-icon">📦</div>
+Другое
+</div>
+
+</div>
+
+
+<div class="section">Объявления</div>
+
+<div id="products" class="products"></div>
+
+<div id="empty" class="empty">
+📦<br><br>
+Пока здесь нет объявлений.<br>
+Будьте первым, кто что-нибудь продаст!
+</div>
+
+</div>
+
+
+<!-- ПОИСК -->
+
+<div id="search" class="page">
+
+<div class="form">
+
+<h2>🔎 Поиск</h2>
+
+<input
+id="searchInput"
+placeholder="Что хотите найти?"
+oninput="searchProducts()">
+
+<div id="searchResults"></div>
+
+</div>
+
+</div>
+
+
+<!-- ПРОДАТЬ -->
+
+<div id="sell" class="page">
+
+<div class="form">
+
+<h2>➕ Новое объявление</h2>
+
+<div class="photo-box">
+📷<br><br>
+Добавить фотографии
+<br>
+<input type="file" accept="image/*" multiple>
+</div>
+
+<input id="title" placeholder="Название товара">
+
+<input id="price" type="number" placeholder="Цена, ₽">
+
+<select id="categorySelect">
+
+<option value="">Выберите категорию</option>
+
+<option>Телефоны</option>
+<option>Авто</option>
+<option>Электроника</option>
+<option>Одежда</option>
+<option>Недвижимость</option>
+<option>Услуги</option>
+<option>Животные</option>
+<option>Другое</option>
+
+</select>
+
+<input id="sellCity" placeholder="Город">
+
+<textarea id="description"
+placeholder="Описание товара"></textarea>
+
+<button class="main-button" onclick="createAd()">
+Опубликовать объявление
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ИЗБРАННОЕ -->
+
+<div id="favorites" class="page">
+
+<div class="section">❤️ Избранное</div>
+
+<div class="empty">
+❤️<br><br>
+Здесь будут понравившиеся объявления.
+</div>
+
+</div>
+
+
+<!-- ПРОФИЛЬ -->
+
+<div id="profile" class="page">
+
+<div class="profile">
+
+<h2>👤 Профиль</h2>
+
+<div class="profile-item">
+Мои объявления
+</div>
+
+<div class="profile-item">
+❤️ Избранное
+</div>
+
+<div class="profile-item">
+💬 Мои сообщения
+</div>
+
+<div class="profile-item">
+⚙️ Настройки
+</div>
+
+</div>
+
+</div>
+
+
+<!-- НИЖНЕЕ МЕНЮ -->
+
+<nav>
+
+<button class="active" onclick="showPage('home',this)">
+<span>⌂</span>
+Главная
+</button>
+
+<button onclick="showPage('search',this)">
+<span>🔎</span>
+Поиск
+</button>
+
+<button onclick="showPage('sell',this)">
+<span>➕</span>
+Продать
+</button>
+
+<button onclick="showPage('favorites',this)">
+<span>♡</span>
+Избранное
+</button>
+
+<button onclick="showPage('profile',this)">
+<span>👤</span>
+Профиль
+</button>
+
+</nav>
+
+</div>
+
+
+<script>
+
+let ads = JSON.parse(localStorage.getItem("ads") || "[]");
+
+function showPage(page,button){
+
+document.querySelectorAll(".page")
+.forEach(x=>x.classList.remove("active"));
+
+document.getElementById(page)
+.classList.add("active");
+
+document.querySelectorAll("nav button")
+.forEach(x=>x.classList.remove("active"));
+
+if(button){
+button.classList.add("active");
+}
+
+}
+
+function chooseCity(){
+
+let city=prompt("Введите ваш город:");
+
+if(city && city.trim()){
+
+document.getElementById("cityText")
+.innerText="📍 "+city.trim();
+
+}
+
+}
+
+function openSearch(){
+
+showPage(
+"search",
+document.querySelectorAll("nav button")[1]
+);
+
+document.getElementById("searchInput").focus();
+
+}
+
+function category(name){
+
+showPage(
+"search",
+document.querySelectorAll("nav button")[1]
+);
+
+document.getElementById("searchInput").value=name;
+
+searchProducts();
+
+}
+
+function createAd(){
+
+let title=document.getElementById("title").value.trim();
+let price=document.getElementById("price").value;
+let category=document.getElementById("categorySelect").value;
+let city=document.getElementById("sellCity").value.trim();
+let description=document.getElementById("description").value.trim();
+
+if(!title || !price || !category || !city){
+
+alert("Заполните название, цену, категорию и город.");
+
+return;
+
+}
+
+let ad={
+
+id:Date.now(),
+title:title,
+price:price,
+category:category,
+city:city,
+description:description
+
+};
+
+ads.unshift(ad);
+
+localStorage.setItem(
+"ads",
+JSON.stringify(ads)
+);
+
+document.getElementById("title").value="";
+document.getElementById("price").value="";
+document.getElementById("categorySelect").value="";
+document.getElementById("sellCity").value="";
+document.getElementById("description").value="";
+
+renderAds();
+
+alert("Объявление опубликовано!");
+
+showPage(
+"home",
+document.querySelectorAll("nav button")[0]
+);
+
+}
+
+function renderAds(){
+
+let container=document.getElementById("products");
+let empty=document.getElementById("empty");
+
+container.innerHTML="";
+
+if(ads.length===0){
+
+empty.style.display="block";
+return;
+
+}
+
+empty.style.display="none";
+
+ads.forEach(ad=>{
+
+let card=document.createElement("div");
+
+card.className="card";
+
+card.innerHTML=`
+
+<div class="card-photo">📦</div>
+
+<div class="card-info">
+
+<div class="card-title">
+${escapeHtml(ad.title)}
+</div>
+
+<div class="card-price">
+${Number(ad.price).toLocaleString("ru-RU")} ₽
+</div>
+
+<div class="card-city">
+📍 ${escapeHtml(ad.city)}
+</div>
+
+</div>
+
+`;
+
+container.appendChild(card);
+
+});
+
+}
+
+function searchProducts(){
+
+let query=document
+.getElementById("searchInput")
+.value
+.toLowerCase()
+.trim();
+
+let results=document.getElementById("searchResults");
+
+results.innerHTML="";
+
+let found=ads.filter(ad=>
+
+ad.title.toLowerCase().includes(query) ||
+
+ad.category.toLowerCase().includes(query) ||
+
+ad.city.toLowerCase().includes(query)
+
+);
+
+if(found.length===0){
+
+results.innerHTML=`
+
+<div class="empty">
+Ничего не найдено
+</div>
+
+`;
+
+return;
+
+}
+
+found.forEach(ad=>{
+
+let item=document.createElement("div");
+
+item.className="card";
+
+item.style.marginBottom="12px";
+
+item.innerHTML=`
+
+<div class="card-info">
+
+<div class="card-title">
+${escapeHtml(ad.title)}
+</div>
+
+<div class="card-price">
+${Number(ad.price).toLocaleString("ru-RU")} ₽
+</div>
+
+<div class="card-city">
+📍 ${escapeHtml(ad.city)}
+</div>
+
+<p>${escapeHtml(ad.description)}</p>
+
+</div>
+
+`;
+
+results.appendChild(item);
+
+});
+
+}
+
+function escapeHtml(text){
+
+return String(text)
+
+.replaceAll("&","&amp;")
+
+.replaceAll("<","&lt;")
+
+.replaceAll(">","&gt;")
+
+.replaceAll('"',"&quot;")
+
+.replaceAll("'","&#039;");
+
+}
+
+renderAds();
+
+</script>
+
+</body>
+</html>
